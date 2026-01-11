@@ -1,0 +1,42 @@
+
+> waterbar-backend@1.0.0 dev
+> NODE_ENV=development node server.js
+
+Backend running on http://localhost:4000
+Error: SQLITE_ERROR: no such column: image_url
+--> in Database#get('SELECT id, name, price, image_url FROM products WHERE id = ?', [ 11 ], [Function (anonymous)])
+    at file:///Users/ricardo/Desktop/Business%20Project/waterbar-reservation/backend/db.js:25:8
+    at new Promise (<anonymous>)
+    at get (file:///Users/ricardo/Desktop/Business%20Project/waterbar-reservation/backend/db.js:24:10)
+    at file:///Users/ricardo/Desktop/Business%20Project/waterbar-reservation/backend/server.js:359:25 {
+  errno: 1,
+  code: 'SQLITE_ERROR',
+  __augmented: true
+}
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+Error: SQLITE_ERROR: near ".": syntax error
+--> in Database#all('\n' +
+  '    SELECT\n' +
+  '      o.id AS orderId,\n' +
+  '      oi.product_name AS productName,\n' +
+  '      oi.qty，\n' +
+  '      oi.unit_price\n' +
+  '    FROM orders o\n' +
+  '    JOIN order_items oi ON oi.order_id = o.id\n' +
+  '    WHERE o.user_id = ?\n' +
+  '  ', [ 2 ], [Function (anonymous)])
+    at file:///Users/ricardo/Desktop/Business%20Project/waterbar-reservation/backend/db.js:34:8
+    at new Promise (<anonymous>)
+    at all (file:///Users/ricardo/Desktop/Business%20Project/waterbar-reservation/backend/db.js:33:10)
+    at file:///Users/ricardo/Desktop/Business%20Project/waterbar-reservation/backend/server.js:414:25 {
+  errno: 1,
+  code: 'SQLITE_ERROR',
+  __augmented: true
+}
+Thrown at:
+
+
+Node.js v24.11.1
