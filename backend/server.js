@@ -15,22 +15,45 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret';
 
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',                 // 本地开发
+  'https://你的前端域名.vercel.app',      // 之后部署到 Vercel 的域名
+];
+
 app.use(
   cors({
-    origin: ['http://localhost:5173'],
+    origin: function (origin, callback) {
+      // 允许 Postman / curl / SSR
+      if (!origin) return callback(null, true);
+
+      if (ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
+
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   session({
+    name: 'waterbar.sid',
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',   // Render 是 https
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 天
+    },
   })
 );
+
 
 function requireLogin(req, res, next) {
   if (!req.session.userId) {
