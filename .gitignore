@@ -1,0 +1,7 @@
+**/node_modules
+backend/*.sqlite
+backend/*.sqlite.bak
+.DS_Store
+
+
+
