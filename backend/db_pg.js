@@ -116,8 +116,5 @@ export async function initDb() {
 }
 
 export { pool };
-export async function initDb() {
-  // 只是做“连得上数据库”的检查，避免服务启动时直接挂
-  await pool.query('SELECT 1');
-}
+
 
