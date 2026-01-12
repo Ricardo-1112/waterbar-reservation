@@ -6,7 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import ExcelJS from 'exceljs';
-import { run, get, all } from './db_pg.js';
+import { initDb, run, get, all } from './db_pg.js';
 import { isNowWithinRange } from './utils.js';
 
 dotenv.config();
