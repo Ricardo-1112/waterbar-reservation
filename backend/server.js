@@ -6,7 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import ExcelJS from 'exceljs';
-import { db, initDb, run, get, all } from './db.js';
+import { initDb, run, get, all } from './db.pg.js';
 import { isNowWithinRange } from './utils.js';
 
 dotenv.config();
@@ -173,11 +173,11 @@ app.get('/api/products', async (req, res) => {
       p.hot,
       p.max_per_day,
       p.active,
-      IFNULL(
+      COALESCE(
         SUM(
           CASE
             WHEN o.cancelled = 0
-             AND date(o.created_at, 'localtime') = date('now', 'localtime')
+             AND date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
             THEN oi.qty
             ELSE 0
           END
@@ -339,12 +339,12 @@ app.get('/api/me/today-count', requireLogin, async (req, res) => {
   const userId = req.session.userId;
   const row = await get(
     `
-    SELECT IFNULL(SUM(oi.qty), 0) AS count
+    SELECT COALESCE(SUM(oi.qty), 0) AS count
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
       AND o.cancelled = 0
-      AND date(o.created_at, 'localtime') = date('now', 'localtime')
+      AND date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
   `,
     [userId]
   );
@@ -374,12 +374,12 @@ app.post('/api/order', requireLogin, async (req, res) => {
 
   const todayRow = await get(
     `
-    SELECT IFNULL(SUM(oi.qty), 0) AS count
+    SELECT COALESCE(SUM(oi.qty), 0) AS count
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
       AND o.cancelled = 0
-      AND date(o.created_at, 'localtime') = date('now', 'localtime')
+      AND date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
   `,
     [userId]
   );
@@ -400,11 +400,11 @@ app.post('/api/order', requireLogin, async (req, res) => {
       p.id,
       p.name,
       p.max_per_day,
-      IFNULL(
+      COALESCE(
         SUM(
           CASE
             WHEN o.cancelled = 0
-             AND date(o.created_at, 'localtime') = date('now', 'localtime')
+             AND date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
             THEN oi.qty
             ELSE 0
           END
@@ -601,7 +601,7 @@ app.get('/api/admin/orders/today', requireRole('barAdmin'), async (req, res) => 
     FROM orders o
     JOIN users u ON u.id = o.user_id
     JOIN order_items oi ON oi.order_id = o.id
-    WHERE date(o.created_at, 'localtime') = date('now', 'localtime')
+    WHERE date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
       AND o.cancelled = 0
     ORDER BY o.created_at
   `
@@ -614,10 +614,10 @@ app.get('/api/admin/report/daily', requireRole('barAdmin'), async (req, res) => 
   const rows = await all(
     `
     SELECT
-      date(o.created_at, 'localtime') AS day,
+      (o.created_at AT TIME ZONE 'Asia/Shanghai')::date AS day,
       COUNT(DISTINCT o.id) AS orders,
-      IFNULL(SUM(oi.qty), 0) AS cups,
-      IFNULL(SUM(oi.qty * oi.unit_price), 0) AS amount
+      COALESCE(SUM(oi.qty), 0) AS cups,
+      COALESCE(SUM(oi.qty * oi.unit_price), 0) AS amount
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.cancelled = 0
@@ -634,10 +634,10 @@ app.get('/api/admin/report/weekly', requireRole('barAdmin'), async (req, res) =>
   const rows = await all(
     `
     SELECT
-      strftime('%Y-%W', o.created_at, 'localtime') AS week,
+      to_char(o.created_at AT TIME ZONE 'Asia/Shanghai', 'IYYY-IW') AS week,
       COUNT(DISTINCT o.id) AS orders,
-      IFNULL(SUM(oi.qty), 0) AS cups,
-      IFNULL(SUM(oi.qty * oi.unit_price), 0) AS amount
+      COALESCE(SUM(oi.qty), 0) AS cups,
+      COALESCE(SUM(oi.qty * oi.unit_price), 0) AS amount
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.cancelled = 0
@@ -654,10 +654,10 @@ app.get('/api/admin/report/monthly', requireRole('barAdmin'), async (req, res) =
   const rows = await all(
     `
     SELECT
-      strftime('%Y-%m', o.created_at, 'localtime') AS month,
+      to_char(o.created_at AT TIME ZONE 'Asia/Shanghai', 'IYYY-IW') AS month,
       COUNT(DISTINCT o.id) AS orders,
-      IFNULL(SUM(oi.qty), 0) AS cups,
-      IFNULL(SUM(oi.qty * oi.unit_price), 0) AS amount
+      COALESCE(SUM(oi.qty), 0) AS cups,
+      COALESCE(SUM(oi.qty * oi.unit_price), 0) AS amount
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.cancelled = 0
@@ -674,20 +674,23 @@ app.get('/api/admin/report/excel', requireRole('barAdmin'), async (req, res) => 
   let { date } = req.query;
 
   if (!date) {
-    const todayRow = await get(`SELECT date('now','localtime') AS today`);
-    date = todayRow.today;
-  }
+  const todayRow = await get(`
+    SELECT (now() AT TIME ZONE 'Asia/Shanghai')::date AS today
+  `);
+  date = todayRow.today;
+}
+
 
   const rows = await all(
     `
     SELECT
       oi.product_name AS productName,
-      IFNULL(SUM(oi.qty), 0) AS cups,
-      IFNULL(SUM(oi.qty * oi.unit_price), 0) AS amount
+      COALESCE(SUM(oi.qty), 0) AS cups,
+      COALESCE(SUM(oi.qty * oi.unit_price), 0) AS amount
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.cancelled = 0
-      AND date(o.created_at, 'localtime') = ?
+      AND (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = ?
     GROUP BY oi.product_name
     ORDER BY productName
   `,
@@ -750,7 +753,7 @@ app.get('/api/student/orders/today', requireRole('studentAdmin'), async (req, re
       FROM orders o
       JOIN users u ON u.id = o.user_id
       JOIN order_items oi ON oi.order_id = o.id
-      WHERE date(o.created_at, 'localtime') = date('now', 'localtime')
+      WHERE date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
         AND o.cancelled = 0
       ORDER BY o.created_at
     `
@@ -783,19 +786,18 @@ app.put('/api/student/order/:id/pickup-status', requireRole('studentAdmin'), asy
   }
 });
 
-// ===== 预约开放控制：北京时间日期辅助函数 =====
 async function getBJDay(offsetDays = 0) {
-  const offset = offsetDays === 0 ? '' : `+${offsetDays} day`;
   const row = await get(
-    `SELECT date(datetime('now', '+8 hours'${offset ? `, '${offset}'` : ''})) AS d`
+    `SELECT ((now() AT TIME ZONE 'Asia/Shanghai') + (? * INTERVAL '1 day'))::date AS d`,
+    [offsetDays]
   );
-  return row.d; // 'YYYY-MM-DD'
+  return row.d; // 例如 '2026-01-11'
 }
 
-// 把某个 created_at（UTC ISO 字符串）转成北京时间日期 'YYYY-MM-DD'
+// 把某个 created_at（UTC ISO）转成北京时间日期 'YYYY-MM-DD'
 async function toBJDayFromISO(iso) {
   const row = await get(
-    `SELECT date(?, 'utc', '+8 hours') AS d`,
+    `SELECT ((($1)::timestamptz AT TIME ZONE 'Asia/Shanghai')::date) AS d`,
     [iso]
   );
   return row.d;
@@ -804,11 +806,12 @@ async function toBJDayFromISO(iso) {
 // 判断当前北京时间是否 >= 某个时间（比如 '12:50'）
 async function isNowBJAtOrAfter(hhmm) {
   const row = await get(
-    `SELECT time(datetime('now', '+8 hours')) >= time(?) AS ok`,
+    `SELECT (to_char(now() AT TIME ZONE 'Asia/Shanghai','HH24:MI') >= $1) AS ok`,
     [hhmm]
   );
-  return row.ok === 1;
+  return row.ok === true;
 }
+
 
 // 1) 学生端：获取“今天是否开放预约”（默认：否）
 app.get('/api/reservation/today', requireLogin, async (req, res) => {
@@ -837,12 +840,12 @@ app.put('/api/admin/reservation/tomorrow', requireRole('barAdmin'), async (req, 
   const exist = await get(`SELECT day FROM reservation_days WHERE day = ?`, [day]);
   if (exist) {
     await run(
-      `UPDATE reservation_days SET is_open = ?, updated_at = datetime('now') WHERE day = ?`,
+    `UPDATE reservation_days SET is_open = $1, updated_at = NOW() AT TIME ZONE 'Asia/Shanghai' WHERE day = $2`,
       [value, day]
     );
   } else {
     await run(
-      `INSERT INTO reservation_days (day, is_open, updated_at) VALUES (?, ?, datetime('now'))`,
+      `INSERT INTO reservation_days (day, is_open, updated_at) VALUES ($1, $2, NOW() AT TIME ZONE 'Asia/Shanghai')`,
       [day, value]
     );
   }
