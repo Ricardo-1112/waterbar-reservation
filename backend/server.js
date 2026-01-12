@@ -17,25 +17,26 @@ const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret';
 
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',                 // 本地开发
-  'https://你的前端域名.vercel.app',      // 之后部署到 Vercel 的域名
+  'https://waterbar-reservation.vercel.app',      // 之后部署到 Vercel 的域名
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // 允许 Postman / curl / SSR
-      if (!origin) return callback(null, true);
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
 
-      if (ALLOWED_ORIGINS.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  })
-);
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      return callback(null, true);
+    }
 
+    // 不要抛异常！直接拒绝即可
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.options('*', cors());
 
 app.use(express.json());
 app.use(cookieParser());
