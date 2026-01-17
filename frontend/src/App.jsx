@@ -33,6 +33,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/products"
+            element={
+              <ProtectedRoute roles={['user']}>
+                <UserProductsPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/admin"
