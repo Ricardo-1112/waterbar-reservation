@@ -20,6 +20,8 @@ const ALLOWED_ORIGINS = [
   'https://waterbar-reservation.vercel.app',      // 之后部署到 Vercel 的域名
 ];
 
+app.set('trust proxy', 1);
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -46,6 +48,7 @@ app.use(
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy:true,
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',   // Render 是 https
