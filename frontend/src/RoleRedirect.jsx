@@ -9,6 +9,6 @@ export default function RoleRedirect() {
 
   if (user.role === "admin") return <Navigate to="/admin" replace />;
   if (user.role === "student_admin") return <Navigate to="/student/pickup" replace />;
-  
-  return <Navigate to="/orders" replace />; // 普通学生
+
+  return <Navigate to="/products" replace />; // 普通学生
 }
