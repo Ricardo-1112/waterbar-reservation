@@ -181,7 +181,7 @@ app.get('/api/products', async (req, res) => {
         SUM(
           CASE
             WHEN o.cancelled = 0
-             AND date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
+             AND date(o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
             THEN oi.qty
             ELSE 0
           END
@@ -348,7 +348,7 @@ app.get('/api/me/today-count', requireLogin, async (req, res) => {
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
       AND o.cancelled = 0
-      AND date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
+      AND date(o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
   `,
     [userId]
   );
