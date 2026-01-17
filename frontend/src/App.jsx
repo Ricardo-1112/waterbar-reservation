@@ -13,6 +13,7 @@ import ReportsPage from './pages/admin/ReportsPage.jsx';
 
 import StudentPickupPage from './pages/student/StudentPickupPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import RoleRedirect from './RoleRedirect.jsx';
 
 function App() {
   return (
@@ -23,14 +24,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute roles={['user']}>
-                <UserProductsPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/" element={<RoleRedirect />} />
           <Route
             path="/orders"
             element={
@@ -43,7 +37,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute roles={['barAdmin']}>
+              <ProtectedRoute roles={['admin']}>
                 <BarAdminDashboard />
               </ProtectedRoute>
             }
@@ -51,7 +45,7 @@ function App() {
           <Route
             path="/admin/orders"
             element={
-              <ProtectedRoute roles={['barAdmin']}>
+              <ProtectedRoute roles={['admin']}>
                 <AdminOrdersPage />
               </ProtectedRoute>
             }
@@ -59,7 +53,7 @@ function App() {
           <Route
             path="/admin/reports"
             element={
-              <ProtectedRoute roles={['barAdmin']}>
+              <ProtectedRoute roles={['admin']}>
                 <ReportsPage />
               </ProtectedRoute>
             }
@@ -67,7 +61,7 @@ function App() {
           <Route
             path="/student/pickup"
             element={
-              <ProtectedRoute roles={['studentAdmin']}>
+              <ProtectedRoute roles={['student_admin']}>
                 <StudentPickupPage />
               </ProtectedRoute>
             }
