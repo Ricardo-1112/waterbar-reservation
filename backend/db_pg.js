@@ -103,7 +103,11 @@ export async function initDb() {
       );
     `);
 
-    // 常用索引（可选，但推荐）
+    await pool.query(`
+      ALTER TABLE orders
+      ADD COLUMN IF NOT EXISTS pickup_status INT NOT NULL DEFAULT 0
+    `);
+
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_orders_day ON orders(day);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);`);
