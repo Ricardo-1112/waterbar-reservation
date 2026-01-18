@@ -7,3 +7,4 @@ backend/*.sqlite.bak
 
 .DS_Store
 .DS_Store
+frontend/frontend:test-upload.html
