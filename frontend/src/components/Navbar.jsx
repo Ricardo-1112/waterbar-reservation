@@ -18,14 +18,14 @@ export default function Navbar() {
               <Link to="/orders">我的订单</Link>
             </>
           )}
-          {user?.role === 'barAdmin' && (
+          {user?.role === 'admin' && (
             <>
               <Link to="/admin">水吧后台</Link>
               <Link to="/admin/orders">订单管理</Link> 
               <Link to="/admin/reports">统计报表</Link>
             </>
           )}
-          {user?.role === 'studentAdmin' && <Link to="/student/pickup">取餐核对</Link>}
+          {user?.role === 'student_admin' && <Link to="/student/pickup">取餐核对</Link>}
 
           {user ? (
             <>
