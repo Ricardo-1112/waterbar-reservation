@@ -494,7 +494,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
     SELECT
       o.id,
       o.created_at,
-      (o.created_at AT TIME ZONE 'Asia/Shanghai')::date AS bj_day
+      (o.created_at AT TIME ZONE 'Asia/Shanghai')::date AS bj_day,
       o.cancelled,
       o.pickup_status,
       SUM(oi.qty * oi.unit_price) AS totalPrice
