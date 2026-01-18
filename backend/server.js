@@ -210,7 +210,7 @@ app.get('/api/products', async (req, res) => {
   res.json(products);
 });
 
-app.post('/api/admin/product', requireRole('barAdmin'), async (req, res) => {
+app.post('/api/admin/product', requireRole('admin'), async (req, res) => {
   const { name, price, img, hot, maxPerDay } = req.body;
   if (!name || price == null) {
     return res.status(400).json({ error: '名称和价格必填' });
@@ -228,7 +228,7 @@ app.post('/api/admin/product', requireRole('barAdmin'), async (req, res) => {
 // 水吧管理员：重置学生密码（只允许重置 role='user' 的学生）
 app.post(
   '/api/admin/users/reset-student-password',
-  requireRole('barAdmin'),
+  requireRole('admin'),
   async (req, res) => {
     const { email, newPassword } = req.body;
 
@@ -304,7 +304,7 @@ app.put('/api/admin/products/:id', requireRole('admin'), async (req, res) => {
 
 
 
-app.put('/api/admin/product/:id', requireRole('barAdmin'), async (req, res) => {
+app.put('/api/admin/product/:id', requireRole('admin'), async (req, res) => {
   const { id } = req.params;
   const fields = [];
   const params = [];
@@ -333,7 +333,7 @@ app.put('/api/admin/product/:id', requireRole('barAdmin'), async (req, res) => {
   res.json({ success: true });
 });
 
-app.delete('/api/admin/product/:id', requireRole('barAdmin'), async (req, res) => {
+app.delete('/api/admin/product/:id', requireRole('admin'), async (req, res) => {
   const { id } = req.params;
   await run('DELETE FROM products WHERE id = ?', [id]);
   res.json({ success: true });
@@ -592,7 +592,7 @@ app.delete('/api/order/:id', requireLogin, async (req, res) => {
   res.json({ success: true });
 });
 
-app.get('/api/admin/orders/today', requireRole('barAdmin'), async (req, res) => {
+app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
   const rows = await all(
     `
     SELECT
@@ -614,7 +614,7 @@ app.get('/api/admin/orders/today', requireRole('barAdmin'), async (req, res) => 
   res.json(rows);
 });
 
-app.get('/api/admin/report/daily', requireRole('barAdmin'), async (req, res) => {
+app.get('/api/admin/report/daily', requireRole('admin'), async (req, res) => {
   const rows = await all(
     `
     SELECT
@@ -634,7 +634,7 @@ app.get('/api/admin/report/daily', requireRole('barAdmin'), async (req, res) => 
   res.json(rows);
 });
 
-app.get('/api/admin/report/weekly', requireRole('barAdmin'), async (req, res) => {
+app.get('/api/admin/report/weekly', requireRole('admin'), async (req, res) => {
   const rows = await all(
     `
     SELECT
@@ -654,7 +654,7 @@ app.get('/api/admin/report/weekly', requireRole('barAdmin'), async (req, res) =>
   res.json(rows);
 });
 
-app.get('/api/admin/report/monthly', requireRole('barAdmin'), async (req, res) => {
+app.get('/api/admin/report/monthly', requireRole('admin'), async (req, res) => {
   const rows = await all(
     `
     SELECT
@@ -674,7 +674,7 @@ app.get('/api/admin/report/monthly', requireRole('barAdmin'), async (req, res) =
   res.json(rows);
 });
 
-app.get('/api/admin/report/excel', requireRole('barAdmin'), async (req, res) => {
+app.get('/api/admin/report/excel', requireRole('admin'), async (req, res) => {
   let { date } = req.query;
 
   if (!date) {
@@ -744,7 +744,7 @@ app.get('/api/admin/report/excel', requireRole('barAdmin'), async (req, res) => 
   res.end();
 });
 
-app.get('/api/student/orders/today', requireRole('studentAdmin'), async (req, res) => {
+app.get('/api/student/orders/today', requireRole('student_admin'), async (req, res) => {
   const rows = await all(
     `
       SELECT
@@ -766,7 +766,7 @@ app.get('/api/student/orders/today', requireRole('studentAdmin'), async (req, re
 });
 
 // 学生管理员：标记是否已取
-app.put('/api/student/order/:id/pickup-status', requireRole('studentAdmin'), async (req, res) => {
+app.put('/api/student/order/:id/pickup-status', requireRole('student_admin'), async (req, res) => {
   const { id } = req.params;
   const { pickupStatus } = req.body; // 前端传 true / false 或 'picked' / 'pending'
 
@@ -825,7 +825,7 @@ app.get('/api/reservation/today', requireLogin, async (req, res) => {
 });
 
 // 2) 水吧管理员：获取“明天是否开放预约”（默认：否）
-app.get('/api/admin/reservation/tomorrow', requireRole('barAdmin'), async (req, res) => {
+app.get('/api/admin/reservation/tomorrow', requireRole('admin'), async (req, res) => {
   const day = await getBJDay(1);
   const row = await get(`SELECT is_open FROM reservation_days WHERE day = ?`, [day]);
   const isOpen = row ? row.is_open === 1 : false; // ✅ 默认不开放
@@ -833,7 +833,7 @@ app.get('/api/admin/reservation/tomorrow', requireRole('barAdmin'), async (req, 
 });
 
 // 3) 水吧管理员：设置“明天是否开放预约”
-app.put('/api/admin/reservation/tomorrow', requireRole('barAdmin'), async (req, res) => {
+app.put('/api/admin/reservation/tomorrow', requireRole('admin'), async (req, res) => {
   const { isOpen } = req.body;
 
   // 允许 true/false 或 1/0
