@@ -181,7 +181,7 @@ app.get('/api/products', async (req, res) => {
         SUM(
           CASE
             WHEN o.cancelled = 0
-             AND date(o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
+             AND (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
             THEN oi.qty
             ELSE 0
           END
@@ -348,7 +348,7 @@ app.get('/api/me/today-count', requireLogin, async (req, res) => {
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
       AND o.cancelled = 0
-      AND date(o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
+      AND (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
   `,
     [userId]
   );
@@ -383,7 +383,7 @@ app.post('/api/order', requireLogin, async (req, res) => {
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
       AND o.cancelled = 0
-      AND date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
+      AND (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
   `,
     [userId]
   );
@@ -408,7 +408,7 @@ app.post('/api/order', requireLogin, async (req, res) => {
         SUM(
           CASE
             WHEN o.cancelled = 0
-             AND date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
+             AND (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
             THEN oi.qty
             ELSE 0
           END
@@ -494,7 +494,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
     SELECT
       o.id,
       o.created_at,
-      date(o.created_at, 'utc', '+8 hours') AS bj_day,
+      (o.created_at AT TIME ZONE 'Asia/Shanghai')::date AS bj_day
       o.cancelled,
       o.pickup_status,
       SUM(oi.qty * oi.unit_price) AS totalPrice
@@ -605,7 +605,7 @@ app.get('/api/admin/orders/today', requireRole('barAdmin'), async (req, res) => 
     FROM orders o
     JOIN users u ON u.id = o.user_id
     JOIN order_items oi ON oi.order_id = o.id
-    WHERE date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
+    WHERE (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
       AND o.cancelled = 0
     ORDER BY o.created_at
   `
@@ -757,7 +757,7 @@ app.get('/api/student/orders/today', requireRole('studentAdmin'), async (req, re
       FROM orders o
       JOIN users u ON u.id = o.user_id
       JOIN order_items oi ON oi.order_id = o.id
-      WHERE date(created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
+      WHERE (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
         AND o.cancelled = 0
       ORDER BY o.created_at
     `
@@ -798,7 +798,6 @@ async function getBJDay(offsetDays = 0) {
   return row.d; // 例如 '2026-01-11'
 }
 
-// 把某个 created_at（UTC ISO）转成北京时间日期 'YYYY-MM-DD'
 async function toBJDayFromISO(iso) {
   const row = await get(
     `SELECT ((($1)::timestamptz AT TIME ZONE 'Asia/Shanghai')::date) AS d`,
