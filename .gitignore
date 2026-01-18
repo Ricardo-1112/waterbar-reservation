@@ -5,3 +5,4 @@ backend/*.sqlite.bak
 
 
 
+.DS_Store

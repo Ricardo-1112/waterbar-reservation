@@ -1,7 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:4000';
-
 async function request(path, options = {}) {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(path, {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
@@ -101,7 +99,7 @@ export const api = {
   adminReportWeekly: () => request('/api/admin/report/weekly'),
   adminReportMonthly: () => request('/api/admin/report/monthly'),
   downloadExcel: (dateStr) =>
-    window.open(`${API_BASE}/api/admin/report/excel?date=${dateStr}`, '_blank'),
+    window.open(`/api/admin/report/excel?date=${dateStr}`, '_blank'),
 
   // 学生管理员端
   studentTodayOrders: () => request('/api/student/orders/today'),
