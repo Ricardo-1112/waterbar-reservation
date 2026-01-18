@@ -625,8 +625,8 @@ app.get('/api/admin/report/daily', requireRole('admin'), async (req, res) => {
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.cancelled = 0
-    GROUP BY day
-    ORDER BY day DESC
+    GROUP BY (o.created_at AT TIME ZONE 'Asia/Shanghai')::date
+    ORDER BY (o.created_at AT TIME ZONE 'Asia/Shanghai')::date DESC
     LIMIT 7
   `
   );
@@ -645,8 +645,8 @@ app.get('/api/admin/report/weekly', requireRole('admin'), async (req, res) => {
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.cancelled = 0
-    GROUP BY week
-    ORDER BY week DESC
+    GROUP BY 1
+    ORDER BY 1 DESC
     LIMIT 4
   `
   );
@@ -665,8 +665,8 @@ app.get('/api/admin/report/monthly', requireRole('admin'), async (req, res) => {
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.cancelled = 0
-    GROUP BY month
-    ORDER BY month DESC
+    GROUP BY 1
+    ORDER BY 1 DESC
     LIMIT 6
   `
   );
