@@ -220,6 +220,11 @@ app.post('/api/admin/product', requireRole('admin'), async (req, res) => {
   if (!name || price == null) {
     return res.status(400).json({ error: '名称和价格必填' });
   }
+
+  if (!img) {
+  return res.status(400).json({ error: '请上传商品图片' });
+  }
+  
   await run(
     `
     INSERT INTO products (name, price, img, hot, max_per_day, active)

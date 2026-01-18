@@ -3,6 +3,23 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client.js';
 
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'waterbar_unsigned');
+
+  const res = await fetch(
+    'https://api.cloudinary.com/v1_1/dkrgdowbp/image/upload',
+    {
+      method: 'POST',
+      body: formData,
+    }
+  );
+
+  const data = await res.json();
+  return data.secure_url;
+}
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
   const [editingId, setEditingId] = useState(null);
@@ -435,12 +452,25 @@ export default function AdminProductsPage() {
             </td>
             <td>
               <input
+                type="file"
+                accept="image/*"
                 className="border rounded px-1 py-0.5 w-56"
-                placeholder="图片 URL，可留空"
-                value={newForm.img}
-                onChange={(e) =>
-                  setNewForm((prev) => ({ ...prev, img: e.target.value }))
-                }
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+
+                  try {
+                    const url = await uploadToCloudinary(file);
+                    setNewForm(prev => ({
+                      ...prev,
+                      img: url,
+                    }));
+                    alert('图片上传成功');
+                  } catch (err) {
+                    console.error(err);
+                    alert('图片上传失败');
+                  }
+                }}
               />
             </td>
             <td>
