@@ -16,8 +16,10 @@ const PORT = process.env.PORT || 4000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-secret';
 
 const ALLOWED_ORIGINS = [
-  'http://localhost:5173',                 // 本地开发
-  'https://waterbar-reservation.vercel.app',      // 之后部署到 Vercel 的域名
+  'http://localhost:5173',
+  'https://waterbar-reservation.vercel.app',
+  /^https:\/\/.*\.shipsip\.cn$/,
+  'https://shipsip.cn',
 ];
 
 app.set('trust proxy', 1);
