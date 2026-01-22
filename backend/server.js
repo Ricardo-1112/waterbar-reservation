@@ -188,8 +188,7 @@ app.get('/api/products', async (req, res) => {
         SUM(
           CASE
             WHEN o.cancelled = 0
-            AND o.created_at >= (now() AT TIME ZONE 'Asia/Shanghai')::date
-            AND o.created_at <  ((now() AT TIME ZONE 'Asia/Shanghai')::date + INTERVAL '1 day')
+            AND o.day = (now() AT TIME ZONE 'Asia/Shanghai')::date
             THEN oi.qty
             ELSE 0
           END
