@@ -9,6 +9,29 @@ import {
   isPickupTime,
 } from '../../hooks/useServerTime.js';
 
+function getShanghaiMinutesNow() {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Shanghai',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date());
+
+  const hh = Number(parts.find(p => p.type === 'hour')?.value ?? 0);
+  const mm = Number(parts.find(p => p.type === 'minute')?.value ?? 0);
+
+  return hh * 60 + mm;
+}
+
+function canOrderNowShanghai() {
+  const now = getShanghaiMinutesNow();
+
+  const start = 8 * 60;        // 08:00
+  const end = 11 * 60 + 30;    // 11:30
+
+  return now >= start && now < end;
+}
+
 export default function UserProductsPage() {
   const [products, setProducts] = useState([]);
   const [todayCount, setTodayCount] = useState(0); // 今天已经“下单”的杯数（后台算的）
@@ -116,8 +139,14 @@ export default function UserProductsPage() {
   const handleSubmitOrder = async () => {
     if (totalQtyInCart === 0) return;
 
-    if (!canOrder) {
-      alert('已过预约时间，明日 8:00 开放预定');
+    if (!canOrderNowShanghai()) {
+      const now = getShanghaiMinutesNow();
+
+      if (now < 8 * 60) {
+        alert('未到预约时间（8:00-11:30）');
+      } else {
+        alert('已过预约时间（8:00-11:30）');
+      }
       return;
     }
 
