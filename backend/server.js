@@ -172,49 +172,58 @@ app.get('/api/server-time', (req, res) => {
   res.json({ now: new Date().toISOString() });
 });
 
-// 商品列表接口：会根据「今天未取消的订单」计算剩余量
+// 商品列表接口：根据“今天未取消的订单(day=今天)”计算剩余数量
 app.get('/api/products', async (req, res) => {
-  const rows = await all(
-    `
-    SELECT
-      p.id,
-      p.name,
-      p.price,
-      p.img,
-      p.hot,
-      p.max_per_day,
-      p.active,
-      COALESCE(
-        SUM(
-          CASE
-            WHEN o.cancelled = 0
-            AND o.day = (now() AT TIME ZONE 'Asia/Shanghai')::date
-            THEN oi.qty
-            ELSE 0
-          END
-        ),
-        0
-      ) AS soldToday
-    FROM products p
-    LEFT JOIN order_items oi ON oi.product_id = p.id
-    LEFT JOIN orders o ON oi.order_id = o.id
-    WHERE p.active = 1
-    GROUP BY p.id
-    ORDER BY p.id
-    `
-  );
+  try {
+    const rows = await all(`
+      SELECT
+        p.id,
+        p.name,
+        p.price,
+        p.img,
+        p.hot,
+        p.max_per_day,
+        p.active,
+        COALESCE(
+          SUM(
+            CASE
+              WHEN o.cancelled = 0
+               AND o.day = (now() AT TIME ZONE 'Asia/Shanghai')::date
+              THEN COALESCE(oi.qty, 0)
+              ELSE 0
+            END
+          ),
+          0
+        ) AS sold_today
+      FROM products p
+      LEFT JOIN order_items oi ON oi.product_id = p.id
+      LEFT JOIN orders o ON oi.order_id = o.id
+      WHERE p.active = 1
+      GROUP BY p.id
+      ORDER BY p.id
+    `);
 
-  const products = rows.map((r) => ({
-    id: r.id,
-    name: r.name,
-    price: r.price,
-    img: r.img,
-    hot: !!r.hot,
-    maxPerDay: r.max_per_day,
-    stockToday: Math.max(r.max_per_day - r.soldToday, 0),
-  }));
+    const products = rows.map((r) => {
+      const maxPerDay = Number(r.max_per_day) || 0;
+      const soldToday = Number(r.sold_today) || 0;
+      const stockToday = Math.max(maxPerDay - soldToday, 0);
 
-  res.json(products);
+      return {
+        id: r.id,
+        name: r.name,
+        price: r.price,
+        img: r.img,
+        hot: !!r.hot,
+        maxPerDay,
+        stockToday,
+      };
+    });
+
+    res.json(products);
+  } catch (e) {
+    console.error('GET /api/products failed:', e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 app.post('/api/admin/product', requireRole('admin'), async (req, res) => {
