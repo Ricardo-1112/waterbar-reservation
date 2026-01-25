@@ -40,8 +40,8 @@ export default function UserProductsPage() {
   const serverTime = useServerTime(60000);
   const canOrderByTime = isOrderAllowed(serverTime);   
   const pickupPhase = isPickupTime(serverTime);
-  const [isOpenToday, setIsOpenToday] = useState(false); 
-  const canOrder = canOrderByTime && isOpenToday;
+  
+  const canOrder = canOrderByTime;
 
 
   // 初始化加载：商品列表 + 今天已下单杯数
