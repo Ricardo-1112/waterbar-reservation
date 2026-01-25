@@ -37,11 +37,11 @@ export default function UserProductsPage() {
   const [todayCount, setTodayCount] = useState(0); // 今天已经“下单”的杯数（后台算的）
   const [cart, setCart] = useState({}); // 购物车：{ productId: { product, qty } }
 
-  //const serverTime = useServerTime(60000);
-  //const canOrderByTime = isOrderAllowed(serverTime);   
+  const serverTime = useServerTime(60000);
+  const canOrderByTime = isOrderAllowed(serverTime);   
   const pickupPhase = isPickupTime(serverTime);
   const [isOpenToday, setIsOpenToday] = useState(false); 
-  const canOrder = canOrderNowShanghai() && isOpenToday;
+  const canOrder = canOrderByTime && isOpenToday;
 
 
   // 初始化加载：商品列表 + 今天已下单杯数
