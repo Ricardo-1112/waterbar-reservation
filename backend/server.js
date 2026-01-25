@@ -635,6 +635,21 @@ app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
   res.json(rows);
 });
 
+app.get('/api/time', (req, res) => {
+  // 上海当前时间
+  const now = new Date(
+    new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })
+  );
+  const minutes = now.getHours() * 60 + now.getMinutes();
+
+  res.json({
+    shanghaiMinutes: minutes,
+    hh: now.getHours(),
+    mm: now.getMinutes(),
+    iso: now.toISOString(),
+  });
+});
+
 app.get('/api/admin/report/daily', requireRole('admin'), async (req, res) => {
   const rows = await all(
     `
