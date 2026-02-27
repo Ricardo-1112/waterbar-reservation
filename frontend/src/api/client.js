@@ -24,6 +24,12 @@ async function request(path, options = {}) {
   }
 }
 
+export async function getTime() {
+  const res = await fetch(`/api/time`, { credentials: 'include' });
+  if (!res.ok) throw new Error('Failed to fetch /api/time');
+  return res.json(); // { shanghaiMinutes, hh, mm, iso }
+}
+
 export const api = {
   // ==== 登录 / 用户相关 ====
   register: (data) =>

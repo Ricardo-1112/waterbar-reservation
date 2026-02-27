@@ -3,11 +3,41 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client.js';
 import ProductCard from '../../components/ProductCard.jsx';
-import {
-  useServerTime,
-  isOrderAllowed,
-  isPickupTime,
-} from '../../hooks/useServerTime.js';
+
+
+function useServerTime(intervalMs = 60000) {
+  const [serverTime, setServerTime] = React.useState(null);
+
+  React.useEffect(() => {
+    let timer;
+
+    const tick = async () => {
+      try {
+        const t = await api.getTime(); // <- 对应 client.js 里的 getTime
+        setServerTime(t);
+      } catch (e) {
+        console.error('useServerTime /api/time failed:', e);
+      }
+    };
+
+    tick();
+    timer = setInterval(tick, intervalMs);
+
+    return () => clearInterval(timer);
+  }, [intervalMs]);
+
+  return serverTime; // null 或 {shanghaiMinutes, hh, mm, iso}
+}
+
+function isOrderAllowed(serverTime) {
+  if (!serverTime || typeof serverTime.shanghaiMinutes !== 'number') return false;
+
+  const now = serverTime.shanghaiMinutes;
+  const start = 8 * 60;       // 08:00
+  const end = 11 * 60 + 30;   // 11:30
+
+  return now >= start && now < end;
+}
 
 function getShanghaiMinutesNow() {
   const parts = new Intl.DateTimeFormat('en-GB', {
@@ -39,7 +69,6 @@ export default function UserProductsPage() {
 
   const serverTime = useServerTime(60000);
   const canOrderByTime = isOrderAllowed(serverTime);   
-  const pickupPhase = isPickupTime(serverTime);
   
   const canOrder = canOrderByTime;
   console.log("serverTime=", serverTime);
@@ -142,14 +171,16 @@ export default function UserProductsPage() {
   const handleSubmitOrder = async () => {
     if (totalQtyInCart === 0) return;
 
-    if (!canOrderNowShanghai()) {
-      const now = getShanghaiMinutesNow();
+    if (!serverTime) {
+      alert('正在同步服务器时间，请稍等 1-2 秒再试');
+      return;
+    }
 
-      if (now < 8 * 60) {
-        alert('未到预约时间（8:00-11:30）');
-      } else {
-        alert('已过预约时间（8:00-11:30）');
-      }
+    const now = serverTime.shanghaiMinutes;
+
+    if (!(now >= 8 * 60 && now < 11 * 60 + 30)) {
+      if (now < 8 * 60) alert('未到预约时间（8:00-11:30）');
+      else alert('已过预约时间（8:00-11:30）');
       return;
     }
 
