@@ -42,6 +42,9 @@ export default function UserProductsPage() {
   const pickupPhase = isPickupTime(serverTime);
   
   const canOrder = canOrderByTime;
+  console.log("serverTime=", serverTime);
+  console.log("shanghaiMinutes=", serverTime?.shanghaiMinutes);
+  console.log("canOrderByTime=", canOrderByTime);
 
 
   // 初始化加载：商品列表 + 今天已下单杯数
