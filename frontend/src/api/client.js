@@ -24,24 +24,25 @@ async function request(path, options = {}) {
   }
 }
 
-export async function getTime() {
-  const res = await fetch(`/api/time`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch /api/time');
-  return res.json(); // { shanghaiMinutes, hh, mm, iso }
-}
 
 export const api = {
-  // ==== 登录 / 用户相关 ====
+  getTime: () =>
+    fetch('/api/time', {
+      credentials: 'include'
+    }).then(r => r.json()),
+
   register: (data) =>
     request('/api/register', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
   login: (data) =>
-    request('/api/login', {
+    fetch('/api/login', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(data),
-    }),
+    }).then(r => r.json()),
   me: () => request('/api/me'),
   logout: () =>
     request('/api/logout', {

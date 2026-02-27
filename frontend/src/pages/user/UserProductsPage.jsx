@@ -67,6 +67,8 @@ export default function UserProductsPage() {
   const [todayCount, setTodayCount] = useState(0); // 今天已经“下单”的杯数（后台算的）
   const [cart, setCart] = useState({}); // 购物车：{ productId: { product, qty } }
 
+  const [isOpenToday, setIsOpenToday] = useState(true);
+
   const serverTime = useServerTime(60000);
   const canOrderByTime = isOrderAllowed(serverTime);   
   
