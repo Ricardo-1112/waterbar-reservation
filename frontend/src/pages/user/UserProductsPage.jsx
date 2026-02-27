@@ -6,14 +6,14 @@ import ProductCard from '../../components/ProductCard.jsx';
 
 
 function useServerTime(intervalMs = 60000) {
-  const [serverTime, setServerTime] = React.useState(null);
+  const [serverTime, setServerTime] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let timer;
 
     const tick = async () => {
       try {
-        const t = await api.getTime(); // <- 对应 client.js 里的 getTime
+        const t = await api.getTime();
         setServerTime(t);
       } catch (e) {
         console.error('useServerTime /api/time failed:', e);
@@ -26,7 +26,7 @@ function useServerTime(intervalMs = 60000) {
     return () => clearInterval(timer);
   }, [intervalMs]);
 
-  return serverTime; // null 或 {shanghaiMinutes, hh, mm, iso}
+  return serverTime;
 }
 
 function isOrderAllowed(serverTime) {
