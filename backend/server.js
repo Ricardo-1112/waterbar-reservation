@@ -65,6 +65,19 @@ app.use(
   })
 );
 
+function getShanghaiNow() {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Shanghai',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(new Date());
+
+  const hh = Number(parts.find(p => p.type === 'hour')?.value ?? 0);
+  const mm = Number(parts.find(p => p.type === 'minute')?.value ?? 0);
+
+  return { hh, mm, minutes: hh * 60 + mm };
+}
 
 function requireLogin(req, res, next) {
   if (!req.session.userId) {
@@ -383,8 +396,12 @@ app.post('/api/order', requireLogin, async (req, res) => {
     return res.status(400).json({ error: '购物车为空' });
   }
 
-  if (!isNowWithinRange('08:00', '11:30')) {
-    return res.status(400).json({ error: '已过预约时间（8:00–11:30）' });
+  const minutes = getShanghaiMinutesNow();
+  const start = 8 * 60;
+  const end = 11 * 60 + 30;
+
+  if (!(minutes >= start && minutes < end)) {
+    return res.status(400).json({ error: '已过预约时间(8:00-11:30)' });
   }
 
   // ✅ 今日是否开放预约（默认：否）
@@ -636,17 +653,12 @@ app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
 });
 
 app.get('/api/time', (req, res) => {
-  // 上海当前时间
-  const now = new Date(
-    new Date().toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })
-  );
-  const minutes = now.getHours() * 60 + now.getMinutes();
-
+  const { hh, mm, minutes } = getShanghaiNow();
   res.json({
     shanghaiMinutes: minutes,
-    hh: now.getHours(),
-    mm: now.getMinutes(),
-    iso: now.toISOString(),
+    hh,
+    mm,
+    iso: new Date().toISOString(),
   });
 });
 
