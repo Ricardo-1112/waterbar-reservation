@@ -65,7 +65,7 @@ app.use(
   })
 );
 
-function getShanghaiNow() {
+function getShanghaiMinutesNow() {
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Asia/Shanghai',
     hour: '2-digit',
@@ -76,7 +76,7 @@ function getShanghaiNow() {
   const hh = Number(parts.find(p => p.type === 'hour')?.value ?? 0);
   const mm = Number(parts.find(p => p.type === 'minute')?.value ?? 0);
 
-  return { hh, mm, minutes: hh * 60 + mm };
+  return hh * 60 + mm;
 }
 
 function requireLogin(req, res, next) {
