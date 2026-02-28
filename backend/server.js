@@ -653,7 +653,11 @@ app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
 });
 
 app.get('/api/time', (req, res) => {
-  const { hh, mm, minutes } = getShanghaiNow();
+  const minutes = getShanghaiMinutesNow();
+
+  const hh = Math.floor(minutes / 60);
+  const mm = minutes % 60;
+
   res.json({
     shanghaiMinutes: minutes,
     hh,
