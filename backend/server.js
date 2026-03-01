@@ -486,6 +486,8 @@ app.post('/api/order', requireLogin, async (req, res) => {
 
   try {
     await run('BEGIN TRANSACTION');
+    
+    console.log("DAY VALUE =", day);
 
   const orderResult = await run(
     'INSERT INTO orders (user_id, day, created_at, cancelled, pickup_status) VALUES (?, ?, ?, 0, NULL)',
