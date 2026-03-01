@@ -479,13 +479,18 @@ app.post('/api/order', requireLogin, async (req, res) => {
 
   const now = new Date().toISOString();
 
+  
+  if (!day) {
+    return res.status(500).json({ error: '服务器日期计算失败' });
+  }
+
   try {
     await run('BEGIN TRANSACTION');
 
-    const orderResult = await run(
-      'INSERT INTO orders (user_id, created_at, cancelled, pickup_status) VALUES (?, ?, 0, NULL)',
-      [userId, now]
-    );
+  const orderResult = await run(
+    'INSERT INTO orders (user_id, day, created_at, cancelled, pickup_status) VALUES (?, ?, ?, 0, NULL)',
+    [userId, day, now]
+  );
     const orderId = orderResult.lastID;
 
     for (const it of items) {
@@ -844,10 +849,10 @@ app.put('/api/student/order/:id/pickup-status', requireRole('student_admin'), as
 
 async function getBJDay(offsetDays = 0) {
   const row = await get(
-    `SELECT ((now() AT TIME ZONE 'Asia/Shanghai') + (? * INTERVAL '1 day'))::date AS d`,
+    `SELECT (now() AT TIME ZONE 'Asia/Shanghai' + ($1 * INTERVAL '1 day'))::date AS d`,
     [offsetDays]
   );
-  return row.d; // 例如 '2026-01-11'
+  return row?.d ?? null;
 }
 
 async function toBJDayFromISO(iso) {
