@@ -558,7 +558,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
-    GROUP BY o.id
+    GROUP BY o.id, o.created_at, o.cancelled, o.pickup_status
     ORDER BY o.created_at DESC
   `,
     [userId]
@@ -598,6 +598,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
   }
 
   for (const d of details) {
+    if (!orderMap[d.orderId]) continue;
     orderMap[d.orderId].items.push({
       productName: d.productName,
       qty: d.qty,
