@@ -88,6 +88,8 @@ export default function UserProductsPage() {
         api.reservationToday(),   
       ]);
 
+      console.log("countInfo =", countInfo);
+
       setProducts(prods);
       setTodayCount(countInfo.count || 0);
       setIsOpenToday(!!openInfo?.isOpen);   
@@ -107,6 +109,8 @@ export default function UserProductsPage() {
 
   // 总使用杯数 = 已下单 + 购物车正在选的
   const totalUsed = todayCount + totalQtyInCart;
+  console.log("todayCount render =", todayCount);
+  
   const limitReached = totalUsed >= 2; // 达到 2 杯后，所有商品购买按钮禁用
 
   // 往购物车里加一杯（点商品卡片上的“加入购物车”）
