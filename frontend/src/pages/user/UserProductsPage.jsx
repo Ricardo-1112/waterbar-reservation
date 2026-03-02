@@ -63,6 +63,7 @@ function canOrderNowShanghai() {
 }
 
 export default function UserProductsPage() {
+  console.log("THIS IS USER PRODUCTS PAGE");
   const [products, setProducts] = useState([]);
   const [todayCount, setTodayCount] = useState(0); // 今天已经“下单”的杯数（后台算的）
   const [cart, setCart] = useState({}); // 购物车：{ productId: { product, qty } }
@@ -110,7 +111,7 @@ export default function UserProductsPage() {
   // 总使用杯数 = 已下单 + 购物车正在选的
   const totalUsed = todayCount + totalQtyInCart;
   console.log("todayCount render =", todayCount);
-  
+
   const limitReached = totalUsed >= 2; // 达到 2 杯后，所有商品购买按钮禁用
 
   // 往购物车里加一杯（点商品卡片上的“加入购物车”）
@@ -231,7 +232,7 @@ export default function UserProductsPage() {
           <div>今日已下单：{todayCount} 杯</div>
           <div>本次选择：{totalQtyInCart} 杯</div>
           <div className="mt-1">
-            总计：{todayCount + totalQtyInCart} / 2 杯
+            总计：{999} / 2 杯
           </div>
           {limitReached && (
             <div className="text-red-500 mt-1 text-xs">
