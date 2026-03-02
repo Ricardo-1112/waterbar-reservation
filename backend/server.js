@@ -490,10 +490,13 @@ app.post('/api/order', requireLogin, async (req, res) => {
     console.log("DAY VALUE =", day);
 
   const orderResult = await run(
-    'INSERT INTO orders (user_id, day, created_at, cancelled, pickup_status) VALUES (?, ?, ?, 0, 0)',
+    `INSERT INTO orders (user_id, day, created_at, cancelled, pickup_status)
+     VALUES ($1, $2, $3, 0, 0)
+     RETURNING id`,
     [userId, day, now]
   );
-    const orderId = orderResult.lastID;
+
+  const orderId = orderResult.rows[0].id;
 
     for (const it of items) {
   // ① 读取商品当前信息，作为“下单快照”
