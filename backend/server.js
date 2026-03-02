@@ -544,6 +544,7 @@ app.post('/api/order', requireLogin, async (req, res) => {
 
 app.get('/api/order/mine', requireLogin, async (req, res) => {
   const userId = req.session.userId;
+  const todayBJ = await getBJDay(0);
 
   const orders = await all(
     `
