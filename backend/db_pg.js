@@ -23,7 +23,7 @@ function normalizeSql(sql) {
 export async function run(sql, params = []) {
   const pgSql = normalizeSql(sql);
   const res = await pool.query(pgSql, params);
-  return res.rowCount;
+  return res;
 }
 
 export async function get(sql, params = []) {
