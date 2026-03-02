@@ -373,20 +373,28 @@ app.delete('/api/admin/product/:id', requireRole('admin'), async (req, res) => {
   res.json({ success: true });
 });
 
-app.get('/api/me/today-count', requireLogin, async (req, res) => {
-  const userId = req.session.userId;
-  const row = await get(
-    `
-    SELECT COALESCE(SUM(oi.qty), 0) AS count
-    FROM orders o
-    JOIN order_items oi ON oi.order_id = o.id
-    WHERE o.user_id = ?
+app.get('/api/today-count', requireLogin, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const day = await getBJDay(0);
+
+    const result = await get(
+      `
+      SELECT COALESCE(SUM(oi.qty), 0) AS count
+      FROM orders o
+      JOIN order_items oi ON oi.order_id = o.id
+      WHERE o.day = $1
+      AND o.user_id = $2
       AND o.cancelled = 0
-      AND (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
-  `,
-    [userId]
-  );
-  res.json({ count: row?.count || 0 });
+      `,
+      [day, userId]
+    );
+
+    res.json({ count: Number(result.count) || 0 });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '获取今日下单数失败' });
+  }
 });
 
 app.post('/api/order', requireLogin, async (req, res) => {

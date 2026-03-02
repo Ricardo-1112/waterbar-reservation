@@ -232,7 +232,7 @@ export default function UserProductsPage() {
           <div>今日已下单：{todayCount} 杯</div>
           <div>本次选择：{totalQtyInCart} 杯</div>
           <div className="mt-1">
-            总计：{999} / 2 杯
+            总计：{todayCount + totalQtyInCart} / 2 杯
           </div>
           {limitReached && (
             <div className="text-red-500 mt-1 text-xs">
