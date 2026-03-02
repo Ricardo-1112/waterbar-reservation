@@ -373,7 +373,7 @@ app.delete('/api/admin/product/:id', requireRole('admin'), async (req, res) => {
   res.json({ success: true });
 });
 
-app.get('/api/today-count', requireLogin, async (req, res) => {
+app.get('/api/me/today-count', requireLogin, async (req, res) => {
   try {
     const userId = req.user.id;
     const day = await getBJDay(0);
