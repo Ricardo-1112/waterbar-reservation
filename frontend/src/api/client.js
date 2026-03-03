@@ -12,7 +12,7 @@ async function request(path, options = {}) {
     let message = 'Request failed';
     try {
       const data = await res.json();
-      message = data.error || message;
+      message = data.error || data.message || message;
     } catch {}
     throw new Error(message);
   }
