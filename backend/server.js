@@ -577,7 +577,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
   `,
     [userId]
   );
-  
+
   console.log("DETAILS:", details);
 
   const orderMap = {};
@@ -606,6 +606,8 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
       qty: d.qty,
     });
   }
+  
+  console.log("FINAL ORDER MAP:", orderMap);
 
   res.json(Object.values(orderMap));
 });
