@@ -9,12 +9,12 @@ async function request(path, options = {}) {
   });
 
   if (!res.ok) {
-    let message = 'Request failed';
-    try {
-      const data = await res.json();
-      message = data.error || data.message || message;
-    } catch {}
-    throw new Error(message);
+    if (res.status === 401 && path === '/api/me') {
+      return null;
+    }
+
+    const data = await res.json();
+    throw new Error(data.error || 'Request failed');
   }
 
   try {
