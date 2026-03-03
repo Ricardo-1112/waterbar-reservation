@@ -35,10 +35,7 @@ export function AuthProvider({ children }) {
       else navigate('/');
 
     } catch (err) {
-      if (err.response?.data?.message) {
-        throw new Error(err.response.data.message);
-      }
-      throw new Error('登录失败，请稍后再试');
+        throw new Error(err.message);
     }
   };
 
