@@ -24,12 +24,22 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    await api.login({ email, password });
-    const me = await api.me();
-    setUser(me);
-    if (me.role === 'barAdmin') navigate('/admin');
-    else if (me.role === 'studentAdmin') navigate('/student/pickup');
-    else navigate('/');
+    try {
+      await api.login({ email, password });
+
+      const me = await api.me();
+      setUser(me);
+
+      if (me.role === 'barAdmin') navigate('/admin');
+      else if (me.role === 'studentAdmin') navigate('/student/pickup');
+      else navigate('/');
+
+    } catch (err) {
+      if (err.response?.data?.message) {
+        throw new Error(err.response.data.message);
+      }
+      throw new Error('登录失败，请稍后再试');
+    }
   };
 
   const logout = async () => {

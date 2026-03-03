@@ -6,13 +6,16 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
 
   const submit = async (e) => {
     e.preventDefault();
+    setError(null);
+    
     try {
       await login(email, password);
     } catch (e) {
-      alert('登录失败：' + e.message);
+        setError(e.message);
     }
   };
 
@@ -24,6 +27,11 @@ export default function LoginPage() {
         className="bg-white rounded-xl shadow-sm p-6 w-full max-w-md space-y-4"
       >
         <h1 className="font-semibold text-lg text-center">登录水吧预约系统</h1>
+        {error && (
+          <p className="text-red-500 text-sm text-center">
+            {error}
+          </p >
+        )}
         <input
           type="email"
           className="w-full border rounded px-3 py-2 text-sm"
