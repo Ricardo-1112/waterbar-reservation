@@ -554,7 +554,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
       (o.created_at AT TIME ZONE 'Asia/Shanghai')::date AS bj_day,
       o.cancelled,
       o.pickup_status,
-      COALESCE(SUM(oi.qty * oi.unit_price), 0) AS totalPrice
+      COALESCE(SUM(oi.qty * oi.unit_price), 0) AS "totalPrice"
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
@@ -567,8 +567,8 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
   const details = await all(
     `
     SELECT
-      o.id AS orderId,
-      oi.product_name AS productName,
+      o.id AS "orderId",
+      oi.product_name AS "productName",
       oi.qty,
       oi.unit_price
     FROM orders o
@@ -606,7 +606,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
       qty: d.qty,
     });
   }
-  
+
   console.log("FINAL ORDER MAP:", orderMap);
 
   res.json(Object.values(orderMap));
