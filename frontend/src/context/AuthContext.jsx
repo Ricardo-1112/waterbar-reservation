@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
     (async () => {
       try {
         const me = await api.me();
-        setUser(me);
+        setUser(me || null);
       } catch {
         setUser(null);
       } finally {
@@ -28,6 +28,11 @@ export function AuthProvider({ children }) {
       await api.login({ email, password });
 
       const me = await api.me();
+
+      if (!me) {
+        throw new Error("登录状态异常");
+      }
+
       setUser(me);
 
       if (me.role === 'barAdmin') navigate('/admin');
@@ -35,7 +40,7 @@ export function AuthProvider({ children }) {
       else navigate('/');
 
     } catch (err) {
-        throw new Error(err.message);
+      throw err;
     }
   };
 
