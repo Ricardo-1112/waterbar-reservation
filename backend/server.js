@@ -554,7 +554,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
       (o.created_at AT TIME ZONE 'Asia/Shanghai')::date AS bj_day,
       o.cancelled,
       o.pickup_status,
-      SUM(oi.qty * oi.unit_price) AS totalPrice
+      COALESCE(SUM(oi.qty * oi.unit_price), 0) AS totalPrice
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
@@ -577,6 +577,8 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
   `,
     [userId]
   );
+  
+  console.log("DETAILS:", details);
 
   const orderMap = {};
   for (const o of orders) {
