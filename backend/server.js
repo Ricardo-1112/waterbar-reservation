@@ -578,8 +578,6 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
     [userId]
   );
 
-  console.log("DETAILS:", details);
-
   const orderMap = {};
   for (const o of orders) {
   const ps = o.pickup_status || 'pending';
@@ -594,7 +592,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
       createdAt: o.created_at,
       cancelled: !!o.cancelled,
       pickupStatus: finalStatus,
-      totalPrice: o.totalPrice,
+      totalPrice: Number(o.totalPrice),
       items: [],
     };
   }
@@ -606,8 +604,6 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
       qty: d.qty,
     });
   }
-
-  console.log("FINAL ORDER MAP:", orderMap);
 
   res.json(Object.values(orderMap));
 });
