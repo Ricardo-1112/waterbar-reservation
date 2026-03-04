@@ -674,8 +674,6 @@ app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
   `
   );
   
-  console.log(rows)
-
   res.json(rows);
 });
 
