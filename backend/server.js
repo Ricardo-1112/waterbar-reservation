@@ -673,6 +673,8 @@ app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
     ORDER BY o.created_at
   `
   );
+  
+  console.log(rows)
 
   res.json(rows);
 });
