@@ -661,7 +661,7 @@ app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
       o.id,
       u.email,
       p.name AS product_name,
-      oi.qty,
+      o.qty,
       o.created_at,
       o.pickup_status
     FROM orders o
