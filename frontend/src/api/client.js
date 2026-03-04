@@ -36,18 +36,19 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+
   login: (data) =>
-    fetch('/api/login', {
+    request('/api/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify(data),
-    }).then(r => r.json()),
-  me: () => request('/api/me'),
-  logout: () =>
-    request('/api/logout', {
-      method: 'POST',
     }),
+
+   me: () => request('/api/me'),
+   
+   logout: () =>
+     request('/api/logout', {
+       method: 'POST',
+     }),
 
   reservationToday: () => request('/api/reservation/today'),
 

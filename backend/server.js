@@ -149,7 +149,7 @@ app.post('/api/login', async (req, res) => {
 
   // ① 先查用户
   const user = await get('SELECT * FROM users WHERE email = ?', [email]);
-  if (!user) return res.status(400).json({ error: '账号或密码错误' });
+  if (!user) return res.status(400).json({ error: '账号不存在' });
 
   // ② 只有学生账号才校验格式
   if (user.role === 'user' && !isValidStudentEmail(email)) {
@@ -160,12 +160,16 @@ app.post('/api/login', async (req, res) => {
 
   // ③ 校验密码
   const ok = await bcrypt.compare(password, user.password_hash);
-  if (!ok) return res.status(400).json({ error: '账号或密码错误' });
+  if (!ok) return res.status(400).json({ error: '密码错误' });
 
   // ④ 登录成功
   req.session.userId = user.id;
   req.session.role = user.role;
-  res.json({ success: true });
+
+  return res.json({ 
+    success: true, 
+    user: { id: user.id, email: user.email, role: user.role }
+  });
 });
 
 

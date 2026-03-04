@@ -25,9 +25,9 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      await api.login({ email, password });
+      const result = await api.login({ email, password });
 
-      const me = await api.me();
+      const me = result?.user;
 
       if (!me) {
         throw new Error("登录状态异常");
