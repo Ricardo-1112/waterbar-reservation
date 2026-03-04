@@ -666,8 +666,7 @@ app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
       o.pickup_status
     FROM orders o
     LEFT JOIN users u ON u.id = o.user_id
-    LEFT JOIN order_items oi ON oi.order_id = o.id
-    LEFT JOIN products p ON p.id = oi.product_id
+    LEFT JOIN products p ON p.id = o.product_id
     WHERE (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
       AND o.cancelled = 0
     ORDER BY o.created_at
