@@ -833,6 +833,7 @@ app.get('/api/student/orders/today', requireRole('student_admin'), async (req, r
       FROM orders o
       JOIN users u ON u.id = o.user_id
       JOIN order_items oi ON oi.order_id = o.id
+      JOIN products p ON p.id = oi.product_id
       WHERE (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
         AND o.cancelled = 0
       ORDER BY o.created_at
