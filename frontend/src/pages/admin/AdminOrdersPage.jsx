@@ -108,6 +108,8 @@ export default function AdminOrdersPage() {
               <th className="text-left">是否已取</th>
             </tr>
           </thead>
+          console.log(rows)
+
           <tbody>
             {rows.map((r) => (
               <tr key={r.id} className="border-b">
