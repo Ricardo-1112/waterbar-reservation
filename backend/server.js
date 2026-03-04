@@ -836,7 +836,7 @@ app.get('/api/student/orders/today', requireRole('student_admin'), async (req, r
       JOIN products p ON p.id = oi.product_id
       WHERE (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
         AND o.cancelled = 0
-      ORDER BY o.created_at
+      ORDER BY o.created_at DESC
     `
   );
   res.json(rows);

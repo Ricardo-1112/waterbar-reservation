@@ -36,9 +36,9 @@ export default function StudentPickupPage() {
         </thead>
         <tbody>
           {orders.map((o) => (
-            <tr key={`${o.id}-${o.productName}`} className="border-b">
-              <td className="py-2">{o.userEmail}</td>
-              <td>{o.productName}</td>
+            <tr key={`${o.id}-${o.product_name}`} className="border-b">
+              <td className="py-2">{o.email}</td>
+              <td>{o.product_name}</td>
               <td>{o.qty}</td>
               <td>
                 {new Date(o.created_at).toLocaleTimeString('zh-CN', {
