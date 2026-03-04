@@ -115,7 +115,7 @@ export default function AdminOrdersPage() {
                 <td>{r.product_name}</td>
                 <td>{r.qty}</td>
                 <td>
-                  {r.createdAt
+                  {r.created_at
                     ? new Date(r.createdAt).toLocaleTimeString('zh-CN', {
                         hour: '2-digit',
                         minute: '2-digit',
@@ -123,7 +123,7 @@ export default function AdminOrdersPage() {
                     : '-'}
                 </td>
                 <td>
-                  {r.pickupStatus === 'picked' ? (
+                  {r.pickup_status === 'picked' ? (
                     <span className="text-emerald-600">已取</span>
                   ) : (
                     <span className="text-amber-600">未取</span>
