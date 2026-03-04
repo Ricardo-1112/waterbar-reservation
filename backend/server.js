@@ -825,8 +825,8 @@ app.get('/api/student/orders/today', requireRole('student_admin'), async (req, r
     `
       SELECT
         o.id,
-        u.email AS userEmail,
-        oi.product_name AS productName,
+        u.email,
+        p.name AS product_name,
         oi.qty,
         o.created_at,
         o.pickup_status
