@@ -115,8 +115,8 @@ export default function AdminOrdersPage() {
                 <td>{r.product_name}</td>
                 <td>{r.qty}</td>
                 <td>
-                  {r.created_at
-                    ? new Date(r.created_at).toLocaleTimeString('zh-CN', {
+                  {(r.created_at || r.createdAt)
+                    ? new Date(r.created_at || r.createdAt).toLocaleTimeString('zh-CN', {
                         hour: '2-digit',
                         minute: '2-digit',
                       })
