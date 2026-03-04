@@ -111,8 +111,8 @@ export default function AdminOrdersPage() {
           <tbody>
             {rows.map((r) => (
               <tr key={r.id} className="border-b">
-                <td className="py-2">{r.email}</td>
-                <td>{r.product_name}</td>
+                <td className="py-2">{r.email || '-'}</td>
+                <td>{r.product_name || r.productName || '-'}</td>
                 <td>{r.qty}</td>
                 <td>
                   {(r.created_at || r.createdAt)
