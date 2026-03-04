@@ -109,6 +109,7 @@ export default function AdminOrdersPage() {
             </tr>
           </thead>
           <tbody>
+            {console.log(rows)}
             {rows.map((r) => (
               <tr key={r.id} className="border-b">
                 <td className="py-2">{r.email ?? '-'}</td>
