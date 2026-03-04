@@ -124,6 +124,7 @@ export default function UserProductsPage() {
       );
       // 如果已经达到 2 杯，就不再增加
       if (todayCount + totalInPrev >= 2) {
+        alert("每日最多预约 2 杯");
         return prev;
       }
 
@@ -143,6 +144,7 @@ export default function UserProductsPage() {
         0
       );
       if (todayCount + totalInPrev >= 2) {
+        alert("每日最多预约 2 杯");
         return prev;
       }
       const item = prev[productId];
