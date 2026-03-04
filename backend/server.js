@@ -655,24 +655,23 @@ app.delete('/api/order/:id', requireLogin, async (req, res) => {
 });
 
 app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
-  const rows = await all(
-    `
+  const rows = await all(`
     SELECT
       o.id,
-      u.email,
-      p.name AS product_name,
-      o.qty,
-      o.created_at,
-      o.pickup_status
+      u.email AS "userEmail",
+      p.name  AS "productName",
+      oi.qty  AS qty,
+      o.created_at AS "createdAt",
+      o.pickup_status AS "pickupStatus"
     FROM orders o
     LEFT JOIN users u ON u.id = o.user_id
-    LEFT JOIN products p ON p.id = o.product_id
+    LEFT JOIN order_items oi ON oi.order_id = o.id
+    LEFT JOIN products p ON p.id = oi.product_id
     WHERE (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = (now() AT TIME ZONE 'Asia/Shanghai')::date
       AND o.cancelled = 0
-    ORDER BY o.created_at
-  `
-  );
-  
+    ORDER BY o.created_at DESC
+  `);
+
   res.json(rows);
 });
 
