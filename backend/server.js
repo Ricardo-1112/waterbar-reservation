@@ -844,22 +844,19 @@ app.get('/api/student/orders/today', requireRole('student_admin'), async (req, r
   res.json(rows);
 });
 
-// 学生管理员：标记是否已取
 app.put('/api/student/order/:id/pickup-status', requireRole('student_admin'), async (req, res) => {
   const { id } = req.params;
-  const { pickupStatus } = req.body; // 前端传 true / false 或 'picked' / 'pending'
+  const { pickupStatus } = req.body; 
 
-  // 统一存成字符串：'picked' 或 'pending'
   const status =
     pickupStatus === true || pickupStatus === 'picked'
-      ? 'picked'
-      : 'pending';
+      ? 1
+      : 0;
 
   try {
-    // ⚠️ 这里用的是真正数据库里的字段名，一般是 snake_case
     await run(
-      'UPDATE orders SET pickup_status = ? WHERE id = ?',
-      [status, id]
+      "UPDATE orders SET pickup_status = 1 WHERE id = ? AND pickup_status = 0",
+      [id]
     );
 
     res.json({ success: true });
