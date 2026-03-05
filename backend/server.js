@@ -788,15 +788,15 @@ app.get('/api/admin/report/excel', requireRole('admin'), async (req, res) => {
 
   rows.forEach((r) => {
     sheet.addRow({
-      date,
+      date: date.toString().slice(0, 10),
       productName: r.productName,
       cups: r.cups,
       amount: r.amount,
     });
   });
 
-  const totalCups = rows.reduce((sum, r) => sum + r.cups, 0);
-  const totalAmount = rows.reduce((sum, r) => sum + r.amount, 0);
+  const totalCups = rows.reduce((sum, r) => sum + Number(r.cups), 0);
+  const totalAmount = rows.reduce((sum, r) => sum + Number(r.amount), 0);
   sheet.addRow({});
   sheet.addRow({
     date: '',
