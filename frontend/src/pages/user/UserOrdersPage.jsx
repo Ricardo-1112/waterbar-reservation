@@ -90,7 +90,7 @@ export default function UserOrdersPage() {
                     : '未取'}
                 </td>
                 <td>
-                  {!o.cancelled && !o.pickupStatus && (
+                  {!o.cancelled && o.pickupStatus !== 'picked' && (
                     <button
                       disabled={!canModify}
                       onClick={() => handleCancel(o.id)}

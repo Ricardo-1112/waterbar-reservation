@@ -550,8 +550,6 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
   const userId = req.session.userId;
   const todayBJ = await getBJDay(0);
 
-  const nowLocked = await isNowBJAtOrAfter('11:30');
-
   const orders = await all(
     `
     SELECT
