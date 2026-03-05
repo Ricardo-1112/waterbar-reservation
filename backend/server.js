@@ -771,8 +771,8 @@ app.get('/api/admin/report/excel', requireRole('admin'), async (req, res) => {
     JOIN products p ON p.id = oi.product_id
     WHERE o.cancelled = 0
       AND (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = ?
-    GROUP BY oi.product_name
-    ORDER BY productName
+    GROUP BY p.id, p.name
+    ORDER BY p.name
   `,
     [date]
   );
