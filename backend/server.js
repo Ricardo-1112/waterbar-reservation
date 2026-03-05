@@ -563,7 +563,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
     JOIN order_items oi ON oi.order_id = o.id
     WHERE o.user_id = ?
     GROUP BY o.id, o.created_at, o.cancelled, o.pickup_status
-    ORDER BY o.created_at
+    ORDER BY o.created_at DESC
   `,
     [userId]
   );
