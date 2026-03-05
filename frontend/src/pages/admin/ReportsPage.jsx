@@ -58,7 +58,13 @@ export default function ReportsPage() {
             <tbody>
               {daily.map((r) => (
                 <tr key={r.day} className="border-b">
-                  <td className="py-2">{r.day}</td>
+                  <td className="py-2">
+                    {new Date(r.day).toLocaleDateString('zh-CN', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit'
+                    })}
+                  </td>
                   <td>{r.orders}</td>
                   <td>{r.cups}</td>
                   <td>¥{r.amount}</td>
@@ -94,7 +100,9 @@ export default function ReportsPage() {
             <tbody>
               {weekly.map((r) => (
                 <tr key={r.week} className="border-b">
-                  <td className="py-2">{r.week}</td>
+                  <td className="py-2">
+                    {r.week.replace('-', '年第')}周
+                  </td>
                   <td>{r.orders}</td>
                   <td>{r.cups}</td>
                   <td>¥{r.amount}</td>
@@ -122,7 +130,12 @@ export default function ReportsPage() {
             <tbody>
               {monthly.map((r) => (
                 <tr key={r.month} className="border-b">
-                  <td className="py-2">{r.month}</td>
+                  <td className="py-2">
+                    {new Date(r.month + '-01').toLocaleDateString('zh-CN', {
+                      year: 'numeric',
+                      month: 'long'
+                    })}
+                  </td>
                   <td>{r.orders}</td>
                   <td>{r.cups}</td>
                   <td>¥{r.amount}</td>
