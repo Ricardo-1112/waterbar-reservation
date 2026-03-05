@@ -733,7 +733,7 @@ app.get('/api/admin/report/monthly', requireRole('admin'), async (req, res) => {
   const rows = await all(
     `
     SELECT
-      to_char(o.created_at AT TIME ZONE 'Asia/Shanghai', 'IYYY-IW') AS month,
+      to_char(o.created_at AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM') AS month,
       COUNT(DISTINCT o.id) AS orders,
       COALESCE(SUM(oi.qty), 0) AS cups,
       COALESCE(SUM(oi.qty * oi.unit_price), 0) AS amount
