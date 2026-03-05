@@ -1,5 +1,3 @@
-// frontend/src/pages/user/UserOrdersPage.jsx
-
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client.js';
 import { useServerTime, isOrderAllowed } from '../../hooks/useServerTime.js';
@@ -38,8 +36,6 @@ export default function UserOrdersPage() {
       await api.cancelOrder(id);
       alert('订单已取消');
 
-      // 关键：取消后回到商品页，商品列表会重新从后端获取
-      // 首页组件挂载时会重新调用 /api/products，库存会按“未取消订单”重新计算
       navigate('/');
     } catch (e) {
       alert(e.message);
@@ -85,7 +81,7 @@ export default function UserOrdersPage() {
                 <td>
                   {o.cancelled
                     ? '已取消'
-                    : o.pickupStatus === 'picked'
+                    : o.pickupStatus
                     ? '已取'
                     : '未取'}
                 </td>

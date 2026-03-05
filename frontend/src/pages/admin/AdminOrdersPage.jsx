@@ -1,4 +1,3 @@
-// frontend/src/pages/admin/AdminOrdersPage.jsx
 
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client.js';
@@ -123,7 +122,7 @@ export default function AdminOrdersPage() {
                     : '-'}
                 </td>
                 <td>
-                  {r.pickup_status === 'picked' ? (
+                  {r.pickupStatus ? (
                     <span className="text-emerald-600">已取</span>
                   ) : (
                     <span className="text-amber-600">未取</span>
