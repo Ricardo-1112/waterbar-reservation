@@ -763,11 +763,12 @@ app.get('/api/admin/report/excel', requireRole('admin'), async (req, res) => {
   const rows = await all(
     `
     SELECT
-      oi.product_name AS productName,
+      p.name AS productName,
       COALESCE(SUM(oi.qty), 0) AS cups,
       COALESCE(SUM(oi.qty * oi.unit_price), 0) AS amount
     FROM orders o
     JOIN order_items oi ON oi.order_id = o.id
+    JOIN products p ON p.id = oi.product_id
     WHERE o.cancelled = 0
       AND (o.created_at AT TIME ZONE 'Asia/Shanghai')::date = ?
     GROUP BY oi.product_name
@@ -805,7 +806,7 @@ app.get('/api/admin/report/excel', requireRole('admin'), async (req, res) => {
     amount: totalAmount,
   });
 
-  const fileName = `waterbar-report-${date}.xlsx`;
+  const fileName = `waterbar-report-${date.toString().slice(0,10)}.xlsx`;
   res.setHeader(
     'Content-Type',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
