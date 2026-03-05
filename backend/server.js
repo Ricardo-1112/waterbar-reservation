@@ -831,7 +831,7 @@ app.get('/api/student/orders/today', requireRole('student_admin'), async (req, r
         p.name AS product_name,
         oi.qty,
         o.created_at,
-        o.pickup_status
+        o.pickup_status AS "pickupStatus"
       FROM orders o
       JOIN users u ON u.id = o.user_id
       JOIN order_items oi ON oi.order_id = o.id
