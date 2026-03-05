@@ -763,7 +763,7 @@ app.get('/api/admin/report/excel', requireRole('admin'), async (req, res) => {
   const rows = await all(
     `
     SELECT
-      p.name AS productName,
+      p.name AS "productName",
       COALESCE(SUM(oi.qty), 0) AS cups,
       COALESCE(SUM(oi.qty * oi.unit_price), 0) AS amount
     FROM orders o
@@ -776,7 +776,7 @@ app.get('/api/admin/report/excel', requireRole('admin'), async (req, res) => {
   `,
     [date]
   );
-  
+
   console.log(rows)
 
   const workbook = new ExcelJS.Workbook();
