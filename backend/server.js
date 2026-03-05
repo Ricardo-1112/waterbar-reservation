@@ -776,6 +776,8 @@ app.get('/api/admin/report/excel', requireRole('admin'), async (req, res) => {
   `,
     [date]
   );
+  
+  console.log(rows)
 
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('DailyReport');
