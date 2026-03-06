@@ -89,7 +89,7 @@ export default function UserOrdersPage() {
                 <td>
                   {!o.cancelled &&
                    Number(o.pickupStatus) === 0 &&
-                   o.createdAt.slice(0,10) === today && (
+                   (o.createdAt || o.created_at).slice(0,10) === today && (
                     <button
                       disabled={!canModify}
                       onClick={() => handleCancel(o.id)}
