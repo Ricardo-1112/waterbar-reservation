@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function UserOrdersPage() {
   const [orders, setOrders] = useState([]);
-  const today = new Date().toISOString().slice(0,10);
+  const today = new Date().toLocaleDateString('sv-SE');
   const serverTime = useServerTime(60000);
   const navigate = useNavigate();
 
@@ -89,7 +89,7 @@ export default function UserOrdersPage() {
                 <td>
                   {!o.cancelled &&
                    Number(o.pickupStatus) === 0 &&
-                   (o.createdAt || o.created_at).slice(0,10) === today && (
+                   new Date(o.createdAt || o.created_at).toLocaleDateString('sv-SE') === today && (
                     <button
                       disabled={!canModify}
                       onClick={() => handleCancel(o.id)}
