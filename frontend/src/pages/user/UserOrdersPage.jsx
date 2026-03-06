@@ -82,13 +82,13 @@ export default function UserOrdersPage() {
                 <td>
                   {o.cancelled
                     ? '已取消'
-                    : o.pickupStatus
+                    : Number(o.pickupStatus) === 1
                     ? '已取'
                     : '未取'}
                 </td>
                 <td>
                   {!o.cancelled &&
-                   !o.pickupStatus &&
+                   Number(o.pickupStatus) === 0 &&
                    o.createdAt.slice(0,10) === today && (
                     <button
                       disabled={!canModify}
