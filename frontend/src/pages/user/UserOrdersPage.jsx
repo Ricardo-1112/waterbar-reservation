@@ -60,7 +60,18 @@ export default function UserOrdersPage() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((o) => (
+            {orders.map((o) => {
+
+              console.log({
+                id: o.id,
+                cancelled: o.cancelled,
+                pickupStatus: o.pickupStatus,
+                createdAt: o.createdAt || o.created_at,
+                orderDay: new Date(o.createdAt || o.created_at).toLocaleDateString('sv-SE'),
+                today
+              });
+
+            return (
               <tr key={o.id} className="border-b">
                 <td className="py-2">
                   {o.createdAt
@@ -104,7 +115,8 @@ export default function UserOrdersPage() {
                   )}
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       )}
