@@ -633,6 +633,13 @@ app.delete('/api/order/:id', requireLogin, async (req, res) => {
   const todayBJ = await getBJDay(0);
   const orderBJDay = String(order.day).slice(0, 10);
 
+  console.log('DEBUG DAY CHECK', {
+  todayBJ,
+  orderBJDay,
+  orderDayRaw: order.day,
+  createdAt: order.created_at
+});
+
   // 规则A：非当天订单一律不可取消（前几天的订单直接锁死）
   if (orderBJDay !== todayBJ) {
     return res.status(400).json({ error: '非当天订单不可取消（已锁定）' });
