@@ -630,8 +630,8 @@ app.delete('/api/order/:id', requireLogin, async (req, res) => {
   }
 
   // 3) 计算订单的“北京时间日期”，并和“今天北京时间日期”比较
-  const todayBJ = await getBJDay(0);
-  const orderBJDay = String(order.day).slice(0, 10);
+  const todayBJ = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' });
+  const orderBJDay = new Date(order.day).toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' });
 
   console.log('DEBUG DAY CHECK', {
   todayBJ,
