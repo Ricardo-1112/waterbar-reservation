@@ -631,7 +631,7 @@ app.delete('/api/order/:id', requireLogin, async (req, res) => {
 
   // 3) 计算订单的“北京时间日期”，并和“今天北京时间日期”比较
   const todayBJ = await getBJDay(0);
-  const orderBJDay = await toBJDayFromISO(order.created_at);
+  const orderBJDay = String(order.day).slice(0, 10);
 
   // 规则A：非当天订单一律不可取消（前几天的订单直接锁死）
   if (orderBJDay !== todayBJ) {
