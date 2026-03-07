@@ -93,13 +93,13 @@ export default function UserOrdersPage() {
                 <td>
                   {o.cancelled
                     ? '已取消'
-                    : Number(o.pickupStatus) === 1
+                    : o.pickupStatus === 'picked'
                     ? '已取'
                     : '未取'}
                 </td>
                 <td>
                   {!o.cancelled &&
-                   Number(o.pickupStatus) === 0 &&
+                   o.pickupStatus !== 'picked' &&
                    new Date(o.createdAt || o.created_at).toLocaleDateString('sv-SE') === today && (
                     <button
                       disabled={!canModify}
