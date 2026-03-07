@@ -639,8 +639,14 @@ app.delete('/api/order/:id', requireLogin, async (req, res) => {
   }
 
   // 规则B：当天 11:30 后不可取消
-  if (!isNowWithinRange('08:00', '11:30')) {
-    return res.status(400).json({ error: '已过取消时间（11:30）' });
+  const nowBJ = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Shanghai' });
+  const minutes = new Date(nowBJ).getHours() * 60 + new Date(nowBJ).getMinutes();
+
+  const start = 8 * 60;
+  const end = 11 * 60 + 30;
+
+  if (minutes < start || minutes > end) {
+    return res.status(400).json({ error: '已过取消时间【11:30】' });
   }
 
   // 规则C：12:50 后若仍未取，锁定“未取”，不可取消（防止特殊情况/未来改逻辑）
