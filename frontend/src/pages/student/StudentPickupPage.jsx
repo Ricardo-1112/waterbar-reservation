@@ -15,8 +15,13 @@ export default function StudentPickupPage() {
   }, []);
 
   const markPicked = async (o) => {
+    console.log("CLICK PICK:", o);
+
     if (o.pickupStatus) return;
-    await api.studentPickupStatus(o.id, true);
+
+    const res = await api.studentPickupStatus(o.id, true);
+    console.log("API RESULT:", res);
+
     await load();
   };
 
