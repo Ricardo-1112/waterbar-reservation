@@ -584,7 +584,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
 
   const orderMap = {};
   for (const o of orders) {
-  const ps = o.pickup_status || 'pending';
+  const ps = o.pickup_status === 1;
   let finalStatus = ps;
 
   if (!o.cancelled && ps !== 'picked') {
@@ -675,7 +675,7 @@ app.get('/api/admin/orders/today', requireRole('admin'), async (req, res) => {
       p.name  AS "productName",
       oi.qty  AS qty,
       o.created_at AS "createdAt",
-      o.pickup_status AS "pickupStatus"
+      (o.pickup_status = 1) AS "pickupStatus"
     FROM orders o
     LEFT JOIN users u ON u.id = o.user_id
     LEFT JOIN order_items oi ON oi.order_id = o.id
@@ -844,7 +844,7 @@ app.get('/api/student/orders/today', requireRole('student_admin'), async (req, r
         p.name AS product_name,
         oi.qty,
         o.created_at,
-        o.pickup_status AS "pickupStatus"
+        (o.pickup_status = 1) AS "pickupStatus"
       FROM orders o
       JOIN users u ON u.id = o.user_id
       JOIN order_items oi ON oi.order_id = o.id

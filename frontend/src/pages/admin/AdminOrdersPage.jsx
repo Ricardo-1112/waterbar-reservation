@@ -31,7 +31,7 @@ export default function AdminOrdersPage() {
                 productName: it.productName || it.name,
                 qty: it.qty,
                 createdAt: created || null,
-                pickupStatus: order.pickupStatus || 'pending',
+                pickupStatus: !!order.pickupStatus
               });
             });
           });
@@ -51,7 +51,7 @@ export default function AdminOrdersPage() {
               productName: row.productName || row.name,
               qty: row.qty || row.quantity || 0,
               createdAt: created || null,
-              pickupStatus: row.pickup_status ?? 'pending',
+              pickupStatus: !!row.pickup_status
             };
           });
         }
@@ -124,7 +124,7 @@ export default function AdminOrdersPage() {
                     : '-'}
                 </td>
                 <td>
-                  {r.pickupStatus === 'picked' ? (
+                  {r.pickupStatus ? (
                     <span className="text-emerald-600">已取</span>
                   ) : (
                     <span className="text-amber-600">未取</span>
