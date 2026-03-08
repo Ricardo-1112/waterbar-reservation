@@ -108,7 +108,9 @@ export default function AdminOrdersPage() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
+            {rows.map((r) => {
+              console.log("ADMIN ROW:", r);
+              return (
               <tr key={r.id} className="border-b">
                 <td className="py-2">{r.userEmail ?? '-'}</td>
                 <td>{r.productName ?? '-'}</td>
@@ -129,7 +131,8 @@ export default function AdminOrdersPage() {
                   )}
                 </td>
               </tr>
-            ))}
+            );
+          })}
           </tbody>
         </table>
       )}
