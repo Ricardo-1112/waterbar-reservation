@@ -31,7 +31,7 @@ export default function AdminOrdersPage() {
                 productName: it.productName || it.name,
                 qty: it.qty,
                 createdAt: created || null,
-                pickupStatus: !!order.pickupStatus
+                pickupStatus: order.pickupStatus
               });
             });
           });
@@ -51,7 +51,7 @@ export default function AdminOrdersPage() {
               productName: row.productName || row.name,
               qty: row.qty || row.quantity || 0,
               createdAt: created || null,
-              pickupStatus: !!row.pickup_status
+              pickupStatus: row.pickupStatus
             };
           });
         }
