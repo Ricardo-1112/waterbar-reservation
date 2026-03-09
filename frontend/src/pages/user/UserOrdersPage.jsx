@@ -23,9 +23,9 @@ export default function UserOrdersPage() {
   };
 
   useEffect(() => {
-    load()
+    loadOrders()
 
-    const timer = setInterval(load, 5000)
+    const timer = setInterval(loadOrders, 5000)
 
     return () => clearInterval(timer)
 
