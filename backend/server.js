@@ -585,13 +585,11 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
   const orderMap = {};
   for (const o of orders) {
 
-    const ps = o.pickup_status === 1;
-
     orderMap[o.id] = {
       id: o.id,
       createdAt: o.created_at,
       cancelled: !!o.cancelled,
-      pickupStatus: ps,
+      pickup_status: o.pickup_status,
       totalPrice: Number(o.totalPrice),
       items: [],
     };
@@ -606,7 +604,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
     });
   }
 
-  res.json(Object.values(orderMap));
+  res.json(orders.map(o => orderMap[o.id]));
 });
 
 app.delete('/api/order/:id', requireLogin, async (req, res) => {
