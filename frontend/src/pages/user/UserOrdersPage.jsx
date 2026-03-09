@@ -23,8 +23,13 @@ export default function UserOrdersPage() {
   };
 
   useEffect(() => {
-    loadOrders();
-  }, []);
+    load()
+
+    const timer = setInterval(load, 5000)
+
+    return () => clearInterval(timer)
+
+  }, [])
 
   const handleCancel = async (id) => {
     if (!canModify) {
