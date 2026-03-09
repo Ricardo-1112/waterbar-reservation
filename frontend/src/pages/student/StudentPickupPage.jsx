@@ -51,9 +51,9 @@ export default function StudentPickupPage() {
                   minute: '2-digit',
                 })}
               </td>
-              <td>{o.pickup_status ? '✔ 已取' : '未取'}</td>
+              <td>{o.pickupStatus ? '✔ 已取' : '未取'}</td>
               <td>
-                {!o.pickup_status && (
+                {!o.pickupStatus && (
                   <button
                     onClick={() => markPicked(o)}
                     className="px-3 py-1 text-xs rounded bg-emerald-100 text-emerald-700"
