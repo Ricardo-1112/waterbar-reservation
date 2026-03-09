@@ -584,21 +584,18 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
 
   const orderMap = {};
   for (const o of orders) {
-  const ps = o.pickup_status === 1;
-  let finalStatus = ps;
 
-  if (!o.cancelled && ps !== 'picked') {
-    if (o.bj_day !== todayBJ) finalStatus = 'missed';
-    else if (nowLocked) finalStatus = 'missed';
-  }
+    const ps = o.pickup_status === 1;
+
     orderMap[o.id] = {
       id: o.id,
       createdAt: o.created_at,
       cancelled: !!o.cancelled,
-      pickupStatus: finalStatus,
+      pickupStatus: ps,
       totalPrice: Number(o.totalPrice),
       items: [],
     };
+
   }
 
   for (const d of details) {
@@ -625,7 +622,7 @@ app.delete('/api/order/:id', requireLogin, async (req, res) => {
   if (order.cancelled) return res.status(400).json({ error: '订单已取消' });
 
   // 2) 如果已取，也不能取消
-  if (order.pickup_status === 'picked') {
+  if (order.pickup_status === 1) {
     return res.status(400).json({ error: '已取订单不可取消' });
   }
 
