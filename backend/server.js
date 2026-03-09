@@ -606,7 +606,7 @@ app.get('/api/order/mine', requireLogin, async (req, res) => {
     });
   }
 
-  res.json(orders.map(o => orderMap[o.id]));
+  res.json(Object.values(orderMap));
 });
 
 app.delete('/api/order/:id', requireLogin, async (req, res) => {
