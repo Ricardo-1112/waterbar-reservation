@@ -112,7 +112,7 @@ export const api = {
   // 学生管理员端
   studentTodayOrders: () => request('/api/student/orders/today'),
   studentPickupStatus: (id, picked) =>
-    request(`/api/order/${id}/pickup-status`, {
+    request(`/api/student/order/${id}/pickup-status`, {
       method: 'PUT',
       body: JSON.stringify({ pickupStatus: picked }),
     }),
