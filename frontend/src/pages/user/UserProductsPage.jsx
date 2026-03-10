@@ -123,7 +123,7 @@ export default function UserProductsPage() {
         0
       );
       // 如果已经达到 2 杯，就不再增加
-      if (todayCount + totalInPrev + 1 > 2) {
+      if (todayCount + totalInPrev > 2) {
         alert("每日最多预约 2 杯");
         return prev;
       }
@@ -143,7 +143,7 @@ export default function UserProductsPage() {
         (sum, item) => sum + item.qty,
         0
       );
-      if (todayCount + totalInPrev + 1 > 2) {
+      if (todayCount + totalInPrev > 2) {
         alert("每日最多预约 2 杯");
         return prev;
       }
