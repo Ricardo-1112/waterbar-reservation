@@ -440,7 +440,7 @@ app.post('/api/order', requireLogin, async (req, res) => {
   const already = todayRow?.count || 0;
   console.log("TODAY COUNT =", already);
   const newQty = items.reduce((sum, it) => sum + (it.qty || 0), 0);
-  console.log("NEW QTY =", newQty);
+  console.log("NEW QTY =", newQty, typeof newQty);
 
   if (already + newQty > 2) {
     return res
