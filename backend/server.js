@@ -402,9 +402,6 @@ app.get('/api/me/today-count', requireLogin, async (req, res) => {
 });
 
 app.post('/api/order', requireLogin, async (req, res) => {
-
-  console.log("BODY =", req.body)
-
   const userId = req.session.userId;
   const { items } = req.body;
   if (!Array.isArray(items) || items.length === 0) {
@@ -441,9 +438,7 @@ app.post('/api/order', requireLogin, async (req, res) => {
     [userId]
   );
   const already = Number(todayRow?.count || 0);
-  console.log("TODAY COUNT =", already);
   const newQty = items.reduce((sum, it) => sum + (it.qty || 0), 0);
-  console.log("NEW QTY =", newQty, typeof newQty);
 
   if (already + newQty > 2) {
     return res
@@ -451,11 +446,7 @@ app.post('/api/order', requireLogin, async (req, res) => {
       .json({ error: '每日最多预约 2 杯，请检查数量' });
   }
 
-  console.log("ITEMS =", items)
-
   const productIds = items.map((i) => i.productId);
-  console.log("PRODUCT IDS =", productIds)
-
   const placeholders = productIds.map(() => '?').join(',');
     const rows = await all(
     `
@@ -483,9 +474,6 @@ app.post('/api/order', requireLogin, async (req, res) => {
     productIds
   );
 
-  console.log("ROWS =", rows)
-
-
   if (rows.length !== productIds.length) {
     return res.status(400).json({ error: '包含无效商品' });
   }
@@ -509,8 +497,6 @@ app.post('/api/order', requireLogin, async (req, res) => {
 
   try {
     await run('BEGIN TRANSACTION');
-
-    console.log("DAY VALUE =", day);
 
   const orderResult = await run(
     `INSERT INTO orders (user_id, day, created_at, cancelled, pickup_status)
