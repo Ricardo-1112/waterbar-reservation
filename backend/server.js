@@ -404,7 +404,7 @@ app.get('/api/me/today-count', requireLogin, async (req, res) => {
 app.post('/api/order', requireLogin, async (req, res) => {
 
   console.log("BODY =", req.body)
-  
+
   const userId = req.session.userId;
   const { items } = req.body;
   if (!Array.isArray(items) || items.length === 0) {
@@ -440,7 +440,7 @@ app.post('/api/order', requireLogin, async (req, res) => {
   `,
     [userId]
   );
-  const already = todayRow?.count || 0;
+  const already = Number(todayRow?.count || 0);
   console.log("TODAY COUNT =", already);
   const newQty = items.reduce((sum, it) => sum + (it.qty || 0), 0);
   console.log("NEW QTY =", newQty, typeof newQty);
