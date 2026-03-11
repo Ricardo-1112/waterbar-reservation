@@ -402,6 +402,9 @@ app.get('/api/me/today-count', requireLogin, async (req, res) => {
 });
 
 app.post('/api/order', requireLogin, async (req, res) => {
+
+  console.log("BODY =", req.body)
+  
   const userId = req.session.userId;
   const { items } = req.body;
   if (!Array.isArray(items) || items.length === 0) {
