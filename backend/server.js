@@ -475,6 +475,8 @@ app.post('/api/order', requireLogin, async (req, res) => {
   `,
     productIds
   );
+  console.log("PRODUCT IDS =", productIds)
+  console.log("ROWS =", rows)
 
 
   if (rows.length !== productIds.length) {
