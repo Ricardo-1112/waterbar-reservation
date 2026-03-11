@@ -448,7 +448,11 @@ app.post('/api/order', requireLogin, async (req, res) => {
       .json({ error: '每日最多预约 2 杯，请检查数量' });
   }
 
+  console.log("ITEMS =", items)
+
   const productIds = items.map((i) => i.productId);
+  console.log("PRODUCT IDS =", productIds)
+
   const placeholders = productIds.map(() => '?').join(',');
     const rows = await all(
     `
@@ -475,7 +479,7 @@ app.post('/api/order', requireLogin, async (req, res) => {
   `,
     productIds
   );
-  console.log("PRODUCT IDS =", productIds)
+
   console.log("ROWS =", rows)
 
 
