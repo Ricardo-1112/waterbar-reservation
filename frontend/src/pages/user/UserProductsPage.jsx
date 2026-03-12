@@ -71,7 +71,25 @@ export default function UserProductsPage() {
   const [isOpenToday, setIsOpenToday] = useState(true);
 
   const serverTime = useServerTime(60000);
-  const canOrderByTime = isOrderAllowed(serverTime);   
+  const canOrderByTime = isOrderAllowed(serverTime);
+  
+  const fetchData = async () => {
+  try {
+    const [prods, countInfo, openInfo] = await Promise.all([
+      api.getProducts(),
+      api.getTodayCount(),
+      api.reservationToday(),
+    ])
+
+    setProducts(prods)
+    setTodayCount(countInfo.count || 0)
+    setIsOpenToday(!!openInfo?.isOpen)
+
+  } catch (e) {
+    console.error(e)
+    setIsOpenToday(false)
+  }
+}
   
   const canOrder = canOrderByTime;
   console.log("serverTime=", serverTime);
@@ -79,27 +97,17 @@ export default function UserProductsPage() {
   console.log("canOrderByTime=", canOrderByTime);
 
 
-  // 初始化加载：商品列表 + 今天已下单杯数
   useEffect(() => {
-  (async () => {
-    try {
-      const [prods, countInfo, openInfo] = await Promise.all([
-        api.getProducts(),
-        api.getTodayCount(),
-        api.reservationToday(),   
-      ]);
 
-      console.log("countInfo =", countInfo);
+    fetchData()
 
-      setProducts(prods);
-      setTodayCount(countInfo.count || 0);
-      setIsOpenToday(!!openInfo?.isOpen);   
-    } catch (e) {
-      console.error(e);
-      setIsOpenToday(false); 
-    }
-  })();
-}, []);
+    const timer = setInterval(() => {
+      fetchData()
+    }, 5000)   // 每5秒刷新
+
+    return () => clearInterval(timer)
+
+  }, [])
 
 
   // 购物车里当前“选”的总杯数
@@ -224,6 +232,9 @@ export default function UserProductsPage() {
           <div className="font-semibold">预约时间：每日 8:00–11:30</div>
           <div className="text-slate-500">
             固定取餐时间：<span className="font-medium">12:15–12:50</span>
+          </div>
+          <div className="text-xs text-slate-400 mt-1">
+          页面数据每5秒自动刷新
           </div>
         </div>
         <div className="text-center text-sm font-medium text-amber-600 bg-amber-50 px-3 py-2 rounded-lg ml-0 mr-6">
